@@ -3,9 +3,12 @@ package com.example.yunas.easyschool
 import android.app.Activity
 import android.app.AlertDialog.Builder
 import android.content.Context
+import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.Menu
+import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
 import android.widget.EditText
@@ -21,6 +24,7 @@ class MainActivity : Activity() {
     lateinit var Show1: Button
     lateinit var delete: Button
     lateinit var modify: Button
+   lateinit var Photo : Button
     lateinit var db: SQLiteDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +39,7 @@ class MainActivity : Activity() {
         delete = findViewById(R.id.deletebtn) as Button
         Show1 = findViewById(R.id.showbtn) as Button
         modify = findViewById(R.id.modifybtn) as Button
+        Photo = findViewById(R.id.Photobtn) as Button
 
         db = openOrCreateDatabase("Student_manage", Context.MODE_PRIVATE, null)
         db.execSQL("CREATE TABLE IF NOT EXISTS student(rollno INTEGER,name VARCHAR,course VARCHAR);")
@@ -71,24 +76,20 @@ class MainActivity : Activity() {
         modify.setOnClickListener(OnClickListener {
             // TODO Auto-generated method stub
 
-                // TODO Auto-generated method stub
-                if (eroll_no.getText().toString().trim().length == 0)
-                {
-                    showMessage("Fejl", "Vær venligt indtast Studie Nr.")
-                    return@OnClickListener
-                }
-                val c = db.rawQuery("SELECT * FROM student WHERE rollno='" + eroll_no.getText() + "'", null)
-                if (c.moveToFirst())
-                {
-                    db.execSQL("UPDATE student SET name='" + ename.getText() + "',course='" + ecourse.getText() +
-                            "' WHERE rollno='" + eroll_no.getText() + "'")
-                    showMessage("Success", "Person Ændred")
-                }
-                else
-                {
-                    showMessage("Fejl", "Forkert Studie Nr.")
-                }
-                clearText()
+            // TODO Auto-generated method stub
+            if (eroll_no.getText().toString().trim().length == 0) {
+                showMessage("Fejl", "Vær venligt indtast Studie Nr.")
+                return@OnClickListener
+            }
+            val c = db.rawQuery("SELECT * FROM student WHERE rollno='" + eroll_no.getText() + "'", null)
+            if (c.moveToFirst()) {
+                db.execSQL("UPDATE student SET name='" + ename.getText() + "',course='" + ecourse.getText() +
+                        "' WHERE rollno='" + eroll_no.getText() + "'")
+                showMessage("Success", "Person Ændred")
+            } else {
+                showMessage("Fejl", "Forkert Studie Nr.")
+            }
+            clearText()
 
         })
         view.setOnClickListener(OnClickListener {
@@ -126,6 +127,12 @@ class MainActivity : Activity() {
             showMessage("EasySchool App", "Udviklet af Yunas & Ümit")
         }
 
+        Photo.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(view: View) {
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivityForResult(intent, 0)
+            }
+        })
     }
 
     fun showMessage(title: String, message: String) {
